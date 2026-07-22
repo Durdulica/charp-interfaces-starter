@@ -1,10 +1,12 @@
-using Interfaces.Models;
+using Interfaces.ex4;
 
 internal class Program
 {
-    private static void Main(string[] args)
+    private static void Main()
     {
-        Console.WriteLine("PASUL 1: desenul din cerinta (eticheta + dreptunghi + linie + cerc)");
+        Testare testare = new();
+
+        /*Console.WriteLine("PASUL 1: desenul din cerinta (eticheta + dreptunghi + linie + cerc)");
         Console.WriteLine();
 
         Eticheta eticheta = new Eticheta(new Punct(2, 10), new Punct(6, 8), "Text");
@@ -42,6 +44,6 @@ internal class Program
 
         Desen desenCuLogo = new Desen(new IElement[] { logo, desen });
         desenCuLogo.Translatare(1, 1);
-        desenCuLogo.Afisare();
+        desenCuLogo.Afisare();*/
     }
 }
