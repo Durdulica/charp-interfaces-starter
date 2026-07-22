@@ -1,7 +1,7 @@
 ﻿namespace Interfaces.ex5.Models
 {
-    public interface IComparabil
+    public interface IComparabil<T>
     {
-        int ComparaCu(IComparabil altul);
+        int ComparaCu(T altul);
     }
 }
