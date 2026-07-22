@@ -1,8 +1,8 @@
 ﻿namespace Interfaces.ex5.Models
 {
-    public class Sortator
+    public class Sortator<T> where T:IComparabil<T>
     {
-        public void Sorteaza(IComparabil[] elemente)
+        public void Sorteaza(T[] elemente)
         {
             for (int i = 0; i < elemente.Length - 1; i++)
             {
