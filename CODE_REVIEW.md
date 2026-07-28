@@ -1,221 +1,102 @@
-# Code Review — stefan-charp-interfaces-starter (runda 2)
+# Code Review — stefan-charp-interfaces-starter (runda 3)
 
-**Data:** 2026-07-28 · **Stare build:** trece, 3 warning-uri (toate în `NotificatorCuIstoric.cs`) · **Context:** review după commit-ul „code fixes" (4bc3167); reviewul anterior e în `CODE_REVIEW.pdf`.
+**Data:** 2026-07-28 · **Commit:** ad7766c „code rewiew fixes" · **Build:** trece, 0 warning-uri · **Rulare:** toate cele 5 exerciții + demo-ul cu figuri, output corect
 
-Ce e bine și merită spus: ex1–ex4 au contractele împărțite corect, `Telecomanda`/`CasaDeMarcat`/`CentruDeLivrari`/`MagazinOnline` nu cunosc nicio clasă concretă (exact ideea lecției), iar la ex5 soluția generică `Sortator<T> where T : IComparabil<T>` e un upgrade real față de cerință — prinde amestecul de tipuri la compilare, nu la rulare. Bravo pentru ea, dar vezi M6: un upgrade nedocumentat tot deviație de la cerință se numește.
+## Rezolvate în runda 3 ✅
+
+| Nr. | Constatare | Verificat |
+|---|---|---|
+| B2 | `NotificatorCuIstoric` e acum Decorator adevărat: un singur `interior`, deleagă, istoric real | codul e corect — dar vezi M8 mai jos |
+| M1 | `Bec.SeteazaIntensitate`: validarea înaintea mutării de stare | ✅ |
+| M2 | `EstePornit { get; }` în interfață + `private set` în Bec/Boxa/Priza | ✅ |
+| M3 | `Ramburseaza` cu `<= 0` în CardBancar și Numerar | ✅ |
+| M5 | comutarea pe autonomie se vede: `test2.1` e preluat de ARCTX-250 | ✅ în output |
+| M6 | `Afisare()` pe Elev/Produs/Cuvant, folosită în Testare5 | ✅ (comentariul de la cerința 4 încă lipsește — vezi M9) |
+| M7 | `Program.cs` rulează demo-ul + toate exercițiile | ✅ |
+| C2, C4 | `public` scos din `ILivrator`, format `Priza.Stare()` | ✅ |
+
+Warning-urile de compilare au dispărut complet. Progres real față de runda 2.
 
 ---
 
 ## 🔴 Critice
 
-### B1 — Robot: `Livreaza` aruncă excepție deși `PoateLivra` a promis `true`
-`ex3/Models/Robot.cs:32-36`
+### B1 (rămas, formă nouă) — Robot: contorul nu se mai resetează NICIODATĂ
+`ex3/Models/Robot.cs:23` + `ex3/Models/Robot.cs:32-36`
 
-Cerința (bonus ex3): „la a 4-a livrare `PoateLivra` returnează `false` o dată, apoi contorul se resetează". Tu ai pus verificarea de reîncărcare în `Livreaza`, care aruncă `InvalidOperationException("This courier is recharging")`.
+Fix-ul e pe jumătate: `PoateLivra` refuză acum corect la `livrare == 3` — dar reset-ul contorului a rămas în `Livreaza`, în ramura `if (livrare == 3)`. Urmărește fluxul: `CentruDeLivrari` cheamă `Livreaza` DOAR după ce `PoateLivra` a zis `true` — iar la `livrare == 3`, `PoateLivra` zice mereu `false`. Deci ramura cu reset-ul din `Livreaza` a devenit **cod mort**: nimeni nu mai ajunge la ea prin centru, contorul rămâne 3 pentru totdeauna, iar robotul e „la reîncărcat" pe viață.
 
-**Mecanismul:** perechea `PoateLivra`/`Livreaza` e un contract în doi timpi: cel care apelează (aici `CentruDeLivrari.DistribuieColet`) întreabă întâi, și abia apoi livrează. Dacă `PoateLivra` zice `true` dar `Livreaza` aruncă, contractul e mințit — `DistribuieColet` nu are `try/catch` (și nici n-ar trebui să aibă) și aplicația crapă. Mai rău: robotul trebuia doar *sărit* (să preia următorul livrator), nu să dărâme tot centrul.
+Cerința spunea: „`PoateLivra` returnează `false` O DATĂ, apoi contorul se resetează". Reset-ul trebuie mutat în `PoateLivra` — refuzul ESTE momentul resetării (vezi soluția completă în `SOLUTII.pdf`, B1):
 
-**De ce n-ai văzut bug-ul:** în `ex3/Testare.cs` robotul primește exact 3 colete — a 4-a cerere nu vine niciodată. Adaugă `centru.DistribuieColet("test7", 25)` și programul crapă. Un test care nu atinge ramura nu dovedește că ramura e corectă.
+```csharp
+public bool PoateLivra(double greutateKg)
+{
+    if (livrare == 3)
+    {
+        livrare = 0;
+        return false;
+    }
 
-### B2 — NotificatorCuIstoric: mesajele se pierd în tăcere
-`ex4/Models/NotificatorCuIstoric.cs:22-25`
+    return greutateKg <= Capacitate;
+}
+```
 
-`Trimite` are corpul gol: cine folosește acest notificator crede că a trimis mesajul, dar mesajul dispare — fără eroare, fără urmă. Ăsta e cel mai periculos tip de bug: nu crapă nimic, doar lipsesc date.
+…iar ramura `if (livrare == 3) { ... throw }` din `Livreaza` se șterge.
 
-Restul clasei confirmă că Decoratorul a fost înțeles greșit:
-- primește `INotificator[]` — cerința spune „PRIMEȘTE în constructor **alt** `INotificator`" (unul singur, pe care îl îmbracă);
-- nu deleagă nimic și nu reține niciun mesaj — `istoric` (linia 5) e câmp mort (warning CS0169);
-- `Canal` (linia 7) nu e asignat niciodată → rămâne `null` (warning CS8618);
-- `AfiseazaIstoric` (linia 18) face `Console.WriteLine(Notificari[i])` pe un obiect → afișează numele tipului (`Interfaces.ex4.Models.EmailNotificator`), nu mesaje.
+**Lecția din spatele bug-ului:** un fix care schimbă condiția fără să mute și efectul (reset-ul) lasă cele două jumătăți ale mecanismului în funcții diferite — iar una din ele devine de neatins. După orice fix, întreabă-te: „mai poate ajunge cineva la codul vechi?" Dacă nu, șterge-l — codul mort de azi e bug-ul ascuns de mâine.
 
-**Mecanismul Decorator:** decoratorul semnează ACELAȘI contract ca obiectul îmbrăcat, deleagă apelul mai departe și adaugă comportamentul lui (aici: memorarea mesajului) înainte sau după delegare. Din exterior e de nedistins de un notificator obișnuit — de-asta intră în `MagazinOnline` fără nicio modificare acolo.
+**Și demo-ul tace în continuare:** robotul primește exact 3 colete (`test4`–`test6`), deci nici refuzul, nici (lipsa) revenirii nu apar în output. Adaugă `test7` și `test8` cu 25 kg: cu codul actual vei vedea „No courier available" de DOUĂ ori (bug-ul devine vizibil); cu fix-ul corect, o dată refuz, apoi robotul livrează din nou.
 
 ---
 
 ## 🟡 Importante
 
-### M1 — Bec: starea se schimbă ÎNAINTE de validare
-`ex1/Models/Bec.cs:35-36`
+### M4 (rămas din runda 2) — ex2: rambursarea reușită pe numerar tot nu există
+`ex2/Testare2.cs:22`
+
+Neschimbat: sertarul termină cu 3.51, primul `Ramburseaza(20)` aruncă, deci scenariul „o rambursare pe card ȘI una pe numerar" tot nu e demonstrat, iar al doilea apel din `try` nu se execută niciodată. Fix-ul e în `SOLUTII.pdf` (M4): pornește numerarul de la 300, scoate rambursarea reușită din `try` și prinde `InvalidOperationException`, nu `Exception`.
+
+### M8 (nou) — NotificatorCuIstoric: corectat, dar nefolosit — bonus nedemonstrat
+`ex4/Models/NotificatorCuIstoric.cs` · `ex4/Testare4.cs`
+
+Clasa e acum un Decorator corect, dar `Testare4` n-o instanțiază nicăieri: `AfiseazaIstoric` nu e chemat, deci bonusul există doar ca text sursă. Cod care nu rulează = cod nedovedit — exact capcana de la B1. Împachetează emailul:
 
 ```csharp
-public void SeteazaIntensitate(int procent)
-{
-    EstePornit = true;      // mutare...
-    Intensitate = procent;  // ...apoi validare (poate arunca)
-}
+NotificatorCuIstoric emailCuIstoric = new(new EmailNotificator());
+
+INotificator[] canale =
+[
+    emailCuIstoric,
+    new SmsNotificator(),
+    new ImprimantaBonuri(11, 2022)
+];
 ```
 
-`bec.SeteazaIntensitate(150)` aruncă excepția corectă, dar becul rămâne **pornit**, cu intensitatea veche. O operație care eșuează nu are voie să lase urme — regula e: *validezi tot, abia apoi muți starea*. Inversează liniile (setează întâi `Intensitate`, care validează; dacă trece, abia atunci `EstePornit = true`).
+…și după cele două expedieri cheamă `emailCuIstoric.AfiseazaIstoric()`. Detaliu de verificat în output: emailul invalid din CMD-1002 NU trebuie să apară în istoric (delegarea aruncă înainte de înregistrare).
 
-### M2 — IPornibil: `EstePornit` are setter public
-`ex1/Models/IPornibil.cs:5`
+### M9 (rămas din M6) — ex5: răspunsul-comentariu de la cerința 4 lipsește
+`Program.cs:60-62`
 
-Cerința cere `bool EstePornit { get; }`. Cu `{ get; set; }` în interfață, orice cod poate face `bec.EstePornit = true` ocolind `Porneste()`. Interfața e fața publică — setter-ul e detaliu intern al implementării: în interfață doar `get`, iar în clasă `public bool EstePornit { get; private set; }`.
-
-### M3 — Ramburseaza acceptă suma 0
-`ex2/Models/CardBancar.cs:32`, `ex2/Models/Numerar.cs:34`
-
-`if (pret < 0)` lasă `Ramburseaza(0)` să treacă, deși mesajul spune „Amount must be positive" și `Plateste` folosește corect `<= 0`. Aceeași regulă de business → aceeași condiție peste tot.
-
-### M4 — ex2: rambursarea reușită pe numerar nu se întâmplă niciodată
-`ex2/Testare.cs:22`
-
-Fă calculul sertarului: start 170 → plătește 120.50 → 49.51 → 80 eșuează → plătește 45.99 → **3.51**. Primul `numerar.Ramburseaza(20)` găsește 3.51 în sertar și aruncă imediat — deci cerința „fă o rambursare pe card ȘI una pe numerar" nu e demonstrată; al doilea apel (245.99) nu se mai execută deloc. Pornește sertarul cu mai mulți bani sau rambursează o sumă ≤ 3.51 înainte de cea care provoacă excepția.
-
-### M5 — ex3: scenariul cerut la punctul 4 nu e demonstrat
-`ex3/Testare.cs:27-32`
-
-Cerința: „distribuie destule colete mici încât unei drone să i se termine autonomia și să preia următorul livrator". Drona1 (14 km) face 2 livrări → 4 km rămași → următorul colet mic ar trebui preluat de drona2. Dar după `test2` nu mai trimiți niciun colet ≤ 3 kg, deci comutarea pe autonomie nu se vede în output (la `test3`+ dronele pică pe greutate, nu pe autonomie). Adaugă 1-2 colete mici după `test2`.
-
-### M6 — ex5: cerințe lipsă pe lângă upgrade-ul generic
-`ex5/Models/` + `ex5/Testare.cs`
-
-- Cele 3 clase nu au metoda `Afisare()` cerută — afișarea e duplicată în `Testare.cs` în 6 for-uri identice.
-- Răspunsul-comentariu de la cerința 4 (de ce criteriul stă în `Elev`, nu în `Sortator`) lipsește din `Program.cs`.
-- Cu `Sortator<T>` generic nu mai poți sorta toate cele 3 array-uri „CU ACELAȘI obiect `Sortator`" (ai 3 instanțe). Deviația e justificabilă — dar la predare o *spui*, nu o lași descoperită de corector.
-
-### M7 — Program.cs: rulează doar ex4, demo-ul e comentat
-`Program.cs:9-47`
-
-`dotnet run` execută doar `Interfaces.ex4.Testare`; demo-ul cu figuri (Pasul 1-4 din cerința principală) e într-un bloc comentat. Codul comentat nu compilează odată cu proiectul — poate putrezi fără să observi. Decomentează demo-ul și cheamă toate cele 5 `Testare`-uri pe rând (cu un `Console.WriteLine` separator), ca o singură rulare să arate tot.
+Cerința 4 din ex5 cere explicit un comentariu la finalul lui `Program.cs`: de ce criteriul de sortare stă în `Elev`, nu în `Sortator`. Textul e schițat în `SOLUTII.pdf` (M6) — scrie-l cu cuvintele tale; e partea în care demonstrezi că ai înțeles open/closed, nu doar că ai aplicat-o.
 
 ---
 
 ## 🟢 Cleanups
 
-- **C1** — `ex3/Models/Oameni/Curier.cs:18`: `return greutateKg <= Capacitate ? true : false;` → condiția E deja bool: `return greutateKg <= Capacitate;`. Același pattern cu if/return în `Robot.cs:21-29` și `Drona.cs`.
-- **C2** — `ex3/Models/ILivrator.cs:5`: `public` pe un singur membru de interfață, celelalte fără — membrii de interfață sunt publici implicit; șterge modificatorul.
-- **C3** — `ex1/Models/Boxa.cs:40-43`: `SeteazaIntensitateMinima()` nu e chemată de nimeni (dead code — `ModNoapte` folosește deja `Minim`). Tot aici: `Porneste`/`Opreste` scriu direct în câmpul `volum`, dar `SeteazaIntensitate` trece prin proprietatea `Volum` — alege o singură cale (proprietatea). Și inconsecvență cu `Bec`: acolo `Intensitate` e publică, aici `Volum` privată.
-- **C4** — `ex1/Models/Priza.cs:19`: `Stare()` întoarce doar `"True"` — pune-l în același format cu celelalte rapoarte („este pornita: True").
-- **C5** — `ex4/Models/MagazinOnline.cs:15-18`: `throw new ArgumentException("destinatari")` — mesajul e doar numele parametrului. Folosește `ArgumentNullException.ThrowIfNull(destinatari)`, simetric cu linia 9.
-- **C6** — `ex2/Models/CasaDeMarcat.cs`: `metoda.Nume` nu e citit nicăieri — outputul nu spune cu ce metodă s-a plătit, iar proprietatea cerută de interfață rămâne moartă. Include `metoda.Nume` în mesaje. Tot aici: `Console.Write("\n")` → `Console.WriteLine()`.
-- **C7** — toate `Testare.cs`: toată logica stă în constructor, iar `Program.cs` face `new Testare()` doar pentru efectele secundare. Constructorul construiește obiecte; rularea e o acțiune — mut-o într-o metodă `Ruleaza()`.
-- **C8** — `ex4/Models/EmailNotificator.cs:6-21`, `SmsNotificator.cs`: notificatorul ține destinatarul ca stare (câmp + proprietate cu validare în setter) doar ca să valideze un parametru. Notificatorul n-are nevoie de stare — o metodă privată `ValideazaDestinatar(string)` chemată din `Trimite` spune mai direct ce se întâmplă.
+- **C7 (rămas)** — toată logica `Testare1`–`Testare5` stă în constructori, iar `Program.cs:52-60` face `new` doar pentru efecte secundare (variabilele `testare1`…`testare5` nu sunt folosite nicăieri). O metodă `Ruleaza()` pe fiecare clasă face intenția vizibilă: `new Testare1().Ruleaza();`.
+- **C9 (nou)** — redenumirea `Testare` → `Testare1`…`Testare5` rezolvă ambiguitatea din `using`-uri, dar duplică informația pe care namespace-ul o are deja (`Interfaces.ex1.Testare`). Alternativa fără redenumire: păstrai numele `Testare` peste tot și chemai calificat — `new Interfaces.ex1.Testare();` — fără niciun `using` pe ex1–ex5. Numele numerotate merg, dar când vezi un sufix numeric într-un nume de clasă, întreabă-te dacă nu cumva contextul (namespace, folder) spunea deja același lucru.
+- **C1, C3, C5, C6, C8 (rămase din runda 2)** — neatinse: ternarul redundant din `Curier.cs:18`, metoda moartă `SeteazaIntensitateMinima` din `Boxa`, `ArgumentException("destinatari")` cu mesaj criptic, `metoda.Nume` nefolosit în `CasaDeMarcat`, destinatarul ținut ca stare în notificatoare. Toate au fix-urile în `SOLUTII.pdf`.
 
 ---
 
-## Before / After (criticele)
+## Q&A — runda 3
 
-### B1 — Robot: reîncărcarea mutată în `PoateLivra`
+**Q1.** În `Robot`-ul tău actual, după a 3-a livrare: cine mai poate seta vreodată `livrare` înapoi la 0 și pe ce drum de apel? Desenează lanțul `DistribuieColet → PoateLivra → Livreaza` și arată linia de la care nu se mai poate ajunge la reset.
 
-| Before (`Robot.cs`) | After |
-|---|---|
-| ```csharp
-public bool PoateLivra(double greutateKg)
-{
-    if (greutateKg <= Capacitate)
-    {
-        return true;
-    }
-    return false;
-}
+**Q2.** De ce contează ca rambursarea *reușită* pe numerar să stea ÎNAINTE de blocul `try`, nu înăuntrul lui? Ce ai afla (sau n-ai afla) din output dacă ar sta înăuntru și ar arunca?
 
-public void Livreaza(string adresa, double greutateKg) {
-    if (livrare == 3)
-    {
-        livrare = 0;
-        throw new InvalidOperationException("This courier is recharging");
-    }
-    ...
-}
-``` | ```csharp
-public bool PoateLivra(double greutateKg)
-{
-    if (livrare == 3)
-    {
-        livrare = 0;   // a refuzat o data, apoi e reincarcat
-        return false;
-    }
-    return greutateKg <= Capacitate;
-}
-
-public void Livreaza(string adresa, double greutateKg)
-{
-    if (!PoateLivra(greutateKg))
-    {
-        throw new InvalidOperationException("This courier cannot deliver the package");
-    }
-    livrare++;
-    Console.WriteLine(...);
-}
-``` |
-
-Observație de discutat: și varianta „after" are o subtilitate — `Livreaza` cheamă `PoateLivra`, care consumă refuzul. E acceptabil aici, dar vezi întrebarea Q1.
-
-### B2 — NotificatorCuIstoric: Decorator adevărat
-
-| Before | After |
-|---|---|
-| ```csharp
-public class NotificatorCuIstoric : INotificator
-{
-    private string istoric;
-    INotificator[] Notificari { get; }
-    public string Canal { get; }
-
-    public NotificatorCuIstoric(INotificator[] notificari)
-    {
-        Notificari = notificari;
-    }
-
-    public void AfiseazaIstoric()
-    {
-        for (int i = 0; i < Notificari.Length; i++)
-        {
-            Console.WriteLine(Notificari[i]);
-        }
-    }
-
-    public void Trimite(string destinatar, string mesaj)
-    {
-    }
-}
-``` | ```csharp
-public class NotificatorCuIstoric : INotificator
-{
-    private readonly INotificator interior;
-    private readonly string[] istoric = new string[10];
-    private int numarMesaje;
-
-    public string Canal => interior.Canal;
-
-    public NotificatorCuIstoric(INotificator interior)
-    {
-        this.interior = interior;
-    }
-
-    public void Trimite(string destinatar, string mesaj)
-    {
-        interior.Trimite(destinatar, mesaj);
-        istoric[numarMesaje % istoric.Length] = mesaj;
-        numarMesaje++;
-    }
-
-    public void AfiseazaIstoric()
-    {
-        for (int i = 0; i < istoric.Length; i++)
-        {
-            if (istoric[i] != null)
-            {
-                Console.WriteLine(istoric[i]);
-            }
-        }
-    }
-}
-``` |
-
-Punctul-cheie: `Trimite` întâi **deleagă**, apoi înregistrează — dacă `interior.Trimite` aruncă (email invalid), mesajul eșuat NU intră în istoric. Și fiindcă semnează `INotificator`, îl pui în `MagazinOnline` în locul oricărui canal, cu zero modificări acolo: `new NotificatorCuIstoric(new EmailNotificator())`.
+**Q3.** `NotificatorCuIstoric` deleagă întâi și abia apoi înregistrează mesajul. Dacă ai inversa ordinea, ce ar apărea în istoric după expedierea CMD-1002 (cea cu emailul invalid) — și de ce ar fi asta o minciună?
 
 ---
 
-## Q&A — verifică-ți înțelegerea
-
-**Q1.** `CentruDeLivrari` face `PoateLivra(...)` apoi `Livreaza(...)`. De ce e grav ca `Livreaza` să arunce excepție după ce `PoateLivra` a răspuns `true`? Și subtilitatea din varianta corectată: dacă `Livreaza` cheamă intern `PoateLivra` (care consumă refuzul de reîncărcare), ce se poate întâmpla când centrul cheamă `PoateLivra` de două ori la rând pentru același robot?
-
-**Q2.** După `bec.SeteazaIntensitate(150)` (care aruncă excepție), în ce stare e becul în codul tău actual? De ce regula „validezi tot, apoi muți starea" contează mai ales în metode chemate din bucle care prind excepții și merg mai departe (ca `MagazinOnline.AnuntaExpediere`)?
-
-**Q3.** `Sortator<T> where T : IComparabil<T>` versus `Sortator` ne-generic cu `(Elev)altul` în `ComparaCu`: în fiecare variantă, *când* și *cum* afli că cineva a amestecat un `Produs` într-un array de `Elev` — la compilare sau la rulare? De ce e aproape întotdeauna mai bine „la compilare"?
-
----
-
-*Regula proiectului: codul elevului nu se modifică — toate fragmentele „after" sunt doar în acest document.*
+*Regula proiectului: codul elevului nu se modifică — fix-urile complete sunt în `SOLUTII.pdf`, alături.*
