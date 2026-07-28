@@ -2,9 +2,9 @@
 
 namespace Interfaces.ex1
 {
-    public class Testare
+    public class Testare1
     {
-        public Testare()
+        public Testare1()
         {
             Telecomanda telecomanda = new();
 

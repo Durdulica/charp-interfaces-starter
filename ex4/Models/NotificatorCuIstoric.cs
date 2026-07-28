@@ -2,26 +2,34 @@
 {
     public class NotificatorCuIstoric : INotificator
     {
-        private string istoric;
-        INotificator[] Notificari { get; }
-        public string Canal { get; }
+        private readonly string[] istoric = new string[10];
+        private int nrMesaje;
+        private readonly INotificator interior;
 
-        public NotificatorCuIstoric(INotificator[] notificari)
+        public string Canal => interior.Canal;
+
+        public NotificatorCuIstoric(INotificator interior)
         {
-            Notificari = notificari;
+            this.interior = interior;
         }
 
         public void AfiseazaIstoric()
         {
-            for(int i = 0; i < Notificari.Length; i++)
+            for(int i = 0; i < istoric.Length; i++)
             {
-                Console.WriteLine(Notificari[i]);
+                if (istoric[i] != null)
+                {
+                    Console.WriteLine(istoric[i]);
+                }
             }
         }
 
         public void Trimite(string destinatar, string mesaj)
         {
+            interior.Trimite(destinatar, mesaj);
 
+            istoric[nrMesaje % istoric.Length] = mesaj;
+            nrMesaje++;
         }
     }
 }

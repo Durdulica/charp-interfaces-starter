@@ -20,7 +20,7 @@
 
         public bool PoateLivra(double greutateKg)
         {
-            if (greutateKg <= Capacitate)
+            if (greutateKg <= Capacitate && livrare != 3)
             {
                 return true;
             }

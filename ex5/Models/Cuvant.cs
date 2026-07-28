@@ -10,5 +10,10 @@
         {
             return string.Compare(Text, altul.Text);
         }
+
+        public void Afisare()
+        {
+            Console.WriteLine(Text);
+        }
     }
 }

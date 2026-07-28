@@ -2,9 +2,9 @@
 
 namespace Interfaces.ex4
 {
-    public class Testare
+    public class Testare4
     {
-        public Testare() {
+        public Testare4() {
             INotificator[] canale =
            [
             new EmailNotificator(),

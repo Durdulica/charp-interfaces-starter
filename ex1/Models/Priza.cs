@@ -2,7 +2,7 @@
 {
     public class Priza : IPornibil, IRaportor
     {
-        public bool EstePornit {  get; set; }
+        public bool EstePornit {  get; private set; }
 
         public void Porneste()
         {
@@ -16,7 +16,7 @@
 
         public string Stare()
         {
-            return EstePornit.ToString();
+            return "este pornita: " + EstePornit.ToString();
         }
     }
 }

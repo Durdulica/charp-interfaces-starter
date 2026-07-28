@@ -3,7 +3,7 @@
     public class Bec : IPornibil, IReglabil, IRaportor
     {
         private int intensitate;
-        public bool EstePornit { get; set; }
+        public bool EstePornit { get; private set; }
         public int Minim { get; } = 10;
 
         public int Intensitate
@@ -32,8 +32,8 @@
 
         public void SeteazaIntensitate(int procent)
         {
-            EstePornit = true;
             Intensitate = procent;
+            EstePornit = true;
         }
 
         public string Stare()

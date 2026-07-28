@@ -2,7 +2,7 @@
 {
     public interface IPornibil
     {
-        bool EstePornit { get; set; }
+        bool EstePornit { get; }
 
         void Porneste();
 

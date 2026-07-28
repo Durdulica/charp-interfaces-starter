@@ -4,9 +4,9 @@ using Interfaces.ex3.Models.Oameni;
 
 namespace Interfaces.ex3
 {
-    public class Testare
+    public class Testare3
     {
-        public Testare()
+        public Testare3()
         {
             Curier curier1 = new("Alex", 4000);
             Curier curier2 = new("Stefan", 5000);
@@ -25,6 +25,8 @@ namespace Interfaces.ex3
 
             centru.DistribuieColet("test1", 1);
             centru.DistribuieColet("test2", 2.5);
+            centru.DistribuieColet("test2.1", 2);
+            centru.DistribuieColet("test2.2", 1.5);
             centru.DistribuieColet("test3", 15);
             centru.DistribuieColet("test4", 25);
             centru.DistribuieColet("test5", 25);

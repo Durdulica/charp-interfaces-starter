@@ -2,9 +2,9 @@
 
 namespace Interfaces.ex2
 {
-    public class Testare
+    public class Testare2
     {
-        public Testare() {
+        public Testare2() {
             CasaDeMarcat casa = new();
             double[] cos = [120.50, 80, 45.99];
 

@@ -3,7 +3,7 @@
     public class Boxa : IPornibil, IReglabil, IRaportor
     {
         private int volum;
-        public bool EstePornit { get; set; }
+        public bool EstePornit { get; private set; }
         public int Minim { get; } = 10;
 
         private int Volum

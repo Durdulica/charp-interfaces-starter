@@ -25,5 +25,10 @@
 
             return 0;
         }
+
+        public void Afisare()
+        {
+            Console.WriteLine(Denumire + " " + Pret);
+        }
     }
 }

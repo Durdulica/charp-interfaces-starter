@@ -2,9 +2,9 @@
 
 namespace Interfaces.ex5
 {
-    public class Testare
+    public class Testare5
     {
-        public Testare()
+        public Testare5()
         {
             Elev[] elevi = new Elev[5]
             {
@@ -35,7 +35,7 @@ namespace Interfaces.ex5
 
             for(int i = 0; i < 5; i++)
             {
-                Console.WriteLine(elevi[i].Nume + " " + elevi[i].Media);
+                elevi[i].Afisare();
             } 
 
             Sortator<Elev> sortator1 = new Sortator<Elev>();
@@ -44,14 +44,14 @@ namespace Interfaces.ex5
 
             for (int i = 0; i < 5; i++)
             {
-                Console.WriteLine(elevi[i].Nume + " " + elevi[i].Media);
+                elevi[i].Afisare();
             }
 
             Console.WriteLine();
 
             for(int i = 0; i < 5; i++)
             {
-                Console.WriteLine(produs[i].Denumire + " " + produs[i].Pret);
+                produs[i].Afisare();
             }
 
             Sortator<Produs> sortator2 = new();
@@ -60,14 +60,14 @@ namespace Interfaces.ex5
 
             for (int i = 0; i < 5; i++)
             {
-                Console.WriteLine(produs[i].Denumire + " " + produs[i].Pret);
+                produs[i].Afisare();
             }
 
             Console.WriteLine();
 
             for(int i = 0; i < 5; i++)
             {
-                Console.WriteLine(cuvinte[i].Text);
+                cuvinte[i].Afisare();
             }
 
             Sortator<Cuvant> sortator3 = new();
@@ -76,7 +76,7 @@ namespace Interfaces.ex5
 
             for (int i = 0; i < 5; i++)
             {
-                Console.WriteLine(cuvinte[i].Text);
+                cuvinte[i].Afisare();
             }
         }
     }

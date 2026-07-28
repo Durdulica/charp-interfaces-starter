@@ -29,7 +29,7 @@
 
         public void Ramburseaza(double pret)
         {
-            if (pret < 0)
+            if (pret <= 0)
             {
                 throw new ArgumentException("Amount must be positive");
             }

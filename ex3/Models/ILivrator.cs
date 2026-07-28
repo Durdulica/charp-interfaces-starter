@@ -2,7 +2,7 @@
 {
     public interface ILivrator
     {
-        public string Identificare();
+        string Identificare();
 
         bool PoateLivra(double greutateKg);
 
