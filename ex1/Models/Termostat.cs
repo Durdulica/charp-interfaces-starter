@@ -3,7 +3,7 @@
     public class Termostat : IReglabil, IRaportor
     {
         private int temp;
-
+        public int Minim { get; } = 18;
         private int Temp
         {
             get {  return temp; }
@@ -19,11 +19,6 @@
         public void SeteazaIntensitate(int temperatura)
         {
             Temp = temperatura;
-        }
-
-        public void SeteazaIntensitateMinima()
-        {
-            Temp = 18;
         }
 
         public string Stare()

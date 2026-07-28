@@ -16,7 +16,7 @@
 
         public bool PoateLivra(double greutateKg)
         {
-            if (greutateKg < Capacitate && Autonomie >= 5)
+            if (greutateKg <= Capacitate && Autonomie >= 5)
             {
                 return true;
             }

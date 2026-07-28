@@ -3,36 +3,33 @@
     public class Boxa : IPornibil, IReglabil, IRaportor
     {
         private int volum;
-        private bool EPornita { get; set; }
+        public bool EstePornit { get; set; }
+        public int Minim { get; } = 10;
 
         private int Volum
         {
             get { return volum; }
             set
             {
-                if (value < 0 && value > 100)
+                if (value < 0 || value > 100)
                 {
-
+                    throw new ArgumentException("Volume must be between 0 and 100");
                 }
+
                 volum = value;
             }
         }
 
         public void Porneste()
         {
-            EPornita = true;
+            EstePornit = true;
             volum = 100;
         }
 
         public void Opreste()
         {
-            EPornita = false;
+            EstePornit = false;
             volum = 0;
-        }
-
-        public bool EstePornit()
-        {
-            return EPornita;
         }
 
         public void SeteazaIntensitate(int volum)
@@ -47,7 +44,7 @@
 
         public string Stare()
         {
-            return "e pornita: " + EstePornit().ToString() + ", volum: " + Volum;
+            return "e pornita: " + EstePornit + ", volum: " + Volum;
         }
     }
 }

@@ -10,10 +10,16 @@
             get { return destinatar; }
             set
             {
-                if (string.IsNullOrEmpty(value) || value.Length != 10 || !value.StartsWith("07") || !value.All(char.IsDigit))
+                if (string.IsNullOrEmpty(value) || value.Length != 10 || !value.StartsWith("07"))
                 {
                     throw new ArgumentException("Invalid phone number");
+                }
 
+                for (int i = 0; i < value.Length; i++) {
+                    if (!Char.IsDigit(value[i]))
+                    {
+                        throw new ArgumentException("Invalid phone number");
+                    }
                 }
 
                 destinatar = value;

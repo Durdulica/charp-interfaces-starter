@@ -2,24 +2,19 @@
 {
     public class MagazinOnline
     {
-        private readonly INotificator[] NotificatorCuIstoric;
         private readonly INotificator[] Canale;
 
-        public MagazinOnline(INotificator[] canale, INotificator[] istoric)
+        public MagazinOnline(INotificator[] canale)
         {
-            if (canale == null)
-            {
-                throw new ArgumentNullException(nameof(canale));
-            }
+            ArgumentNullException.ThrowIfNull(canale);
             Canale = canale;
-            NotificatorCuIstoric = istoric;
         }
 
         public void AnuntaExpediere(string client, string[] destinatari, string numarComanda)
         {
             if (destinatari == null)
             {
-                throw new ArgumentException(nameof(destinatari));
+                throw new ArgumentException("destinatari");
             }
 
             if (destinatari.Length != Canale.Length)
@@ -42,18 +37,6 @@
                     Console.WriteLine($"Channel {canal.Canal} failed: {ex.Message}");
                 }
             }
-        }
-
-        public void AfiseazaIstoric()
-        {
-            string mesaje = "";
-
-            for (int i = 0; i < NotificatorCuIstoric.Length; i++)
-            {
-                mesaje += NotificatorCuIstoric[i] + "\n";
-            }
-
-            Console.WriteLine("Istoric mesaje: \n" + mesaje);
         }
     }
 }

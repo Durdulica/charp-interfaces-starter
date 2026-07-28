@@ -3,7 +3,8 @@
     public class Bec : IPornibil, IReglabil, IRaportor
     {
         private int intensitate;
-        private bool EPornit {  get; set; }
+        public bool EstePornit { get; set; }
+        public int Minim { get; } = 10;
 
         public int Intensitate
         {
@@ -20,34 +21,24 @@
 
         public void Porneste()
         {
-            EPornit = true;
-            Intensitate = 100;
+            EstePornit = true;
         }
 
         public void Opreste()
         {
-            EPornit = false;
+            EstePornit = false;
             Intensitate = 0;
-        }
-
-        public bool EstePornit()
-        {
-            return EPornit;
         }
 
         public void SeteazaIntensitate(int procent)
         {
+            EstePornit = true;
             Intensitate = procent;
-        }
-
-        public void SeteazaIntensitateMinima()
-        {
-            Intensitate = 10;
         }
 
         public string Stare()
         {
-            return "este pornit:" + EstePornit().ToString() + ",intensitate: " + Intensitate;
+            return "este pornit:" + EstePornit + ",intensitate: " + Intensitate;
         }
     }
 }

@@ -19,7 +19,8 @@ namespace Interfaces.ex2
             card.Ramburseaza(45.99);
             try
             {
-                numerar.Ramburseaza(-45.99);
+                numerar.Ramburseaza(20);
+                numerar.Ramburseaza(245.99);
             }
             catch (Exception ex) {
                 Console.WriteLine(ex.Message);

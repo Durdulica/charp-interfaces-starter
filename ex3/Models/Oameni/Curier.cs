@@ -15,7 +15,7 @@
 
         public bool PoateLivra(double greutateKg)
         {
-            return greutateKg < Capacitate ? true : false;
+            return greutateKg <= Capacitate ? true : false;
         }
 
         public void Livreaza(string adresa, double greutateKg)

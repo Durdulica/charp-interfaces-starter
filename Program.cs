@@ -1,4 +1,4 @@
-using Interfaces.ex5;
+using Interfaces.ex4;
 
 internal class Program
 {

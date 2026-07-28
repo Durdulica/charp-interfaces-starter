@@ -13,14 +13,14 @@
         
         public bool Plateste(double pret)
         {
-            if (pret < 0)
+            if (pret <= 0)
             {
                 throw new ArgumentException("Amount must be positive");
             }
 
-            if (Sold > pret + Sold/100)
+            if (Sold >= pret + pret/100)
             {
-                Sold -= pret + Sold/100;
+                Sold -= pret + pret/100;
                 return true;
             }
 

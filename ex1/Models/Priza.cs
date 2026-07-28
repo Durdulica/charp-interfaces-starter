@@ -2,26 +2,21 @@
 {
     public class Priza : IPornibil, IRaportor
     {
-        private bool EPornit {  get; set; }
+        public bool EstePornit {  get; set; }
 
         public void Porneste()
         {
-            EPornit = true;
+            EstePornit = true;
         }
 
         public void Opreste()
         {
-            EPornit = false;
-        }
-
-        public bool EstePornit()
-        {
-            return EPornit;
+            EstePornit = false;
         }
 
         public string Stare()
         {
-            return EPornit.ToString();
+            return EstePornit.ToString();
         }
     }
 }

@@ -13,18 +13,20 @@
 
         public bool Plateste(double pret)
         {
-            if (pret < 0)
+            if (pret <= 0)
             {
                 throw new ArgumentException("Amount must be positive");
             }
 
-            if (SumaDisponibila > pret)
+            if (SumaDisponibila >= pret)
             {
+                
                 SumaDisponibila -= pret;
                 return true;
             }
+
             return false;
-            throw new InvalidOperationException("Not enough cash in the drawer");
+            
         }
 
         public void Ramburseaza(double pret)
@@ -34,7 +36,12 @@
                 throw new ArgumentException("Amount must be positive");
             }
 
-            SumaDisponibila += pret;
+            if(SumaDisponibila < pret)
+            {
+                throw new InvalidOperationException("Not enough cash in the drawer");
+            }
+
+            SumaDisponibila -= pret;
         }
     }
 }

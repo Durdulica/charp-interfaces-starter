@@ -19,7 +19,7 @@
                 }
             }
 
-            Console.WriteLine("No courier available for <" + adresa + ">");
+            Console.WriteLine("No courier available for " + adresa);
         }
     }
 }

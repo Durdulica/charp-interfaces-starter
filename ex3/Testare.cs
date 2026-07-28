@@ -27,6 +27,8 @@ namespace Interfaces.ex3
             centru.DistribuieColet("test2", 2.5);
             centru.DistribuieColet("test3", 15);
             centru.DistribuieColet("test4", 25);
+            centru.DistribuieColet("test5", 25);
+            centru.DistribuieColet("test6", 25);
         }
     }
 }

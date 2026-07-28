@@ -12,12 +12,12 @@
 
         public bool Plateste(double pret)
         {
-            if(pret < 0)
+            if(pret <= 0)
             {
                 throw new ArgumentException("Amount must be positive");
             }
 
-            if (Valoare > pret) {
+            if (Valoare >= pret) {
                 Valoare -= pret;
                 return true;
             }

@@ -14,7 +14,7 @@
         {
             for(int i = 0; i < dispozitive.Length; i++)
             {
-                dispozitive[i].SeteazaIntensitateMinima();
+                dispozitive[i].SeteazaIntensitate(dispozitive[i].Minim);
             }
         }
 

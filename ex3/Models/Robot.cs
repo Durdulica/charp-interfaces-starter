@@ -20,12 +20,7 @@
 
         public bool PoateLivra(double greutateKg)
         {
-            if (livrare == 3)
-            {
-                livrare = 0; //reincarcare
-                return false;
-            }
-            if (greutateKg < Capacitate)
+            if (greutateKg <= Capacitate)
             {
                 return true;
             }
@@ -34,6 +29,12 @@
         }
 
         public void Livreaza(string adresa, double greutateKg) {
+            if (livrare == 3)
+            {
+                livrare = 0;
+                throw new InvalidOperationException("This courier is recharging");
+            }
+
             if (!PoateLivra(greutateKg))
             {
                 throw new InvalidOperationException("This courier cannot deliver the package");

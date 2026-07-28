@@ -4,6 +4,6 @@
     {
         void SeteazaIntensitate(int procent);
 
-        void SeteazaIntensitateMinima();
+        int Minim { get; }
     }
 }
