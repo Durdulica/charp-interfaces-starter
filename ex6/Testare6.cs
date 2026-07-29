@@ -4,11 +4,9 @@ namespace Interfaces.ex6
 {
     public class Testare6
     {
-
-
         public Testare6()
         {
-            //metoda nu este vizibila deoarece tipul ei nu este public. Indiferent de tipul tvului din testare metoda nu este vizibila
+            //metoda este vizibila doar prin tipul ei de interfata. Prin tipul IPlayerAudio sau IPlayerVideo se vede metoda
             SmartTv tv = new();
             BoxaPortabila boxa = new("boxa");
             VideoProiector proiector = new("proiector");
@@ -33,9 +31,14 @@ namespace Interfaces.ex6
             {
                 media.RedaMuzica(playerAudio, "Test.mp4");
             }
-            catch (Exception ex) {
+            catch (ArgumentException ex) {
                 Console.WriteLine(ex.Message);
             }
+        }
+
+        public void Testeaza(IPlayerComplet player)
+        {
+            ((IPlayerVideo)player).Reda("test.mp4");
         }
     }
 }

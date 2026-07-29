@@ -12,10 +12,7 @@
 
         public void AnuntaExpediere(string client, string[] destinatari, string numarComanda)
         {
-            if (destinatari == null)
-            {
-                throw new ArgumentException("destinatari");
-            }
+            ArgumentNullException.ThrowIfNull("destinatari");
 
             if (destinatari.Length != Canale.Length)
             {

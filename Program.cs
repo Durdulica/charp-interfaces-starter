@@ -1,15 +1,10 @@
-using Interfaces.ex1;
-using Interfaces.ex2;
-using Interfaces.ex3;
-using Interfaces.ex4;
-using Interfaces.ex5;
-using Interfaces.ex6;
 using Interfaces.Models;
+
 internal class Program
 {
     private static void Main()
     {
-        /*Console.WriteLine("PASUL 1: desenul din cerinta (eticheta + dreptunghi + linie + cerc)");
+        Console.WriteLine("PASUL 1: desenul din cerinta (eticheta + dreptunghi + linie + cerc)");
         Console.WriteLine();
 
         Eticheta eticheta = new Eticheta(new Punct(2, 10), new Punct(6, 8), "Text");
@@ -48,19 +43,21 @@ internal class Program
         Desen desenCuLogo = new Desen(new IElement[] { logo, desen });
         desenCuLogo.Translatare(1, 1);
         desenCuLogo.Afisare();
+        
+        Console.WriteLine();
+        Interfaces.ex1.Testare1 testare1 = new();
+        Console.WriteLine();
+        Interfaces.ex2.Testare2 testare2 = new();
+        Console.WriteLine();
+        Interfaces.ex3.Testare3 testare3 = new();
+        Console.WriteLine();
+        Interfaces.ex4.Testare4 testare4 = new();
+        Console.WriteLine();
+        Interfaces.ex5.Testare5 testare5 = new(); 
+
+        //Criteriul de sortare nu se afla in sortator deoarece este diferit pentru fiecare clasa in parte
 
         Console.WriteLine();
-        Testare1 testare1 = new Testare1();
-        Console.WriteLine();
-        Testare2 testare2 = new Testare2();
-        Console.WriteLine();
-        Testare3 testare3 = new Testare3();
-        Console.WriteLine();
-        Testare4 testare4 = new Testare4();
-        Console.WriteLine();
-        Testare5 testare5 = new Testare5(); 
-        Console.WriteLine();*/
-
-        Testare6 testare6 = new Testare6();
+        Interfaces.ex6.Testare6 testare6 = new();
     }
 }

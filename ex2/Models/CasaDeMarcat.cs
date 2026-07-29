@@ -5,11 +5,11 @@
         public void ProceseazaCos(double[] preturi, IMetodaPlata metoda)
         {
             double platit = 0;
-            Console.Write("\n");
+            Console.WriteLine();
             for (int i = 0; i < preturi.Length; i++)
             {
                 if (metoda.Plateste(preturi[i])) {
-                    Console.WriteLine("plata cu succes: " + preturi[i]);
+                    Console.WriteLine(metoda.Nume + " - plata cu succes: " + preturi[i]);
                     platit += preturi[i];   
                 }
                 else

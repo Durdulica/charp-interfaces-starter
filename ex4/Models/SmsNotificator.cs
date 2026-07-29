@@ -3,33 +3,27 @@
     public class SmsNotificator : INotificator
     {
         public string Canal => "SMS";
-        private string destinatar = "";
-
-        public string Destinatar
-        {
-            get { return destinatar; }
-            set
-            {
-                if (string.IsNullOrEmpty(value) || value.Length != 10 || !value.StartsWith("07"))
-                {
-                    throw new ArgumentException("Invalid phone number");
-                }
-
-                for (int i = 0; i < value.Length; i++) {
-                    if (!Char.IsDigit(value[i]))
-                    {
-                        throw new ArgumentException("Invalid phone number");
-                    }
-                }
-
-                destinatar = value;
-            }
-        }
 
         public void Trimite(string destinatar, string mesaj)
         {
-            Destinatar = destinatar;
-            Console.WriteLine($"[SMS catre {Destinatar}] {mesaj}");
+            ValideazaDestinatar(destinatar);
+            Console.WriteLine($"[SMS catre {destinatar}] {mesaj}");
+        }
+
+        private static void ValideazaDestinatar(string destinatar) 
+        {
+            if (string.IsNullOrEmpty(destinatar) || destinatar.Length != 10 || !destinatar.StartsWith("07"))
+            {
+                throw new ArgumentException("Invalid phone number");
+            }
+
+            for (int i = 0; i < destinatar.Length; i++)
+            {
+                if (!Char.IsDigit(destinatar[i]))
+                {
+                    throw new ArgumentException("Invalid phone number");
+                }
+            }
         }
     }
 }
