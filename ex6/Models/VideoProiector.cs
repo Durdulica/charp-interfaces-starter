@@ -16,7 +16,7 @@
                 throw new ArgumentException("Invalid video file");
             }
 
-            Console.WriteLine("[VIDEO] Redau " + fisier);
+            Console.WriteLine(name + " reda " + fisier);
         }       
     }
 }

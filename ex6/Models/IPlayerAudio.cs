@@ -2,6 +2,6 @@
 {
     public interface IPlayerAudio
     {
-        public void Reda(string fisier);
+        void Reda(string fisier);
     }
 }

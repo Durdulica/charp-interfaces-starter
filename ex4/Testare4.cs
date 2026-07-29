@@ -12,6 +12,7 @@ namespace Interfaces.ex4
             new ImprimantaBonuri(11, 2022)
            ];
 
+            NotificatorCuIstoric emailCuIstoric = new(new EmailNotificator());
             var magazin = new MagazinOnline(canale);
 
             magazin.AnuntaExpediere(
@@ -23,6 +24,8 @@ namespace Interfaces.ex4
                 "Maria Ionescu",
                 ["marias", "07123t5678", ""],
                 "CMD-1002");
+
+            emailCuIstoric.AfiseazaIstoric();
         }
     }
 }

@@ -9,7 +9,7 @@
                 throw new ArgumentException("Invalid audio file");
             }
 
-            Console.WriteLine("[AUDIO] Redau " + fisier);
+            Console.WriteLine("SmartTv reda " + fisier);
         }
 
         void IPlayerVideo.Reda(string fisier)
@@ -19,7 +19,7 @@
                 throw new ArgumentException("Invalid video file");
             }
 
-            Console.WriteLine("[VIDEO] Redau " + fisier);
+            Console.WriteLine("SmartTv reda " + fisier);
         }
     }
 }

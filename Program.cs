@@ -3,12 +3,13 @@ using Interfaces.ex2;
 using Interfaces.ex3;
 using Interfaces.ex4;
 using Interfaces.ex5;
+using Interfaces.ex6;
 using Interfaces.Models;
 internal class Program
 {
     private static void Main()
     {
-        Console.WriteLine("PASUL 1: desenul din cerinta (eticheta + dreptunghi + linie + cerc)");
+        /*Console.WriteLine("PASUL 1: desenul din cerinta (eticheta + dreptunghi + linie + cerc)");
         Console.WriteLine();
 
         Eticheta eticheta = new Eticheta(new Punct(2, 10), new Punct(6, 8), "Text");
@@ -58,6 +59,8 @@ internal class Program
         Testare4 testare4 = new Testare4();
         Console.WriteLine();
         Testare5 testare5 = new Testare5(); 
-        Console.WriteLine();
+        Console.WriteLine();*/
+
+        Testare6 testare6 = new Testare6();
     }
 }

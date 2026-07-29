@@ -16,7 +16,7 @@
                 throw new ArgumentException("Invalid audio file");
             }
 
-            Console.WriteLine("[AUDIO] Redau " + fisier);
+            Console.WriteLine(name + " reda " + fisier);
         }
     }
 }
